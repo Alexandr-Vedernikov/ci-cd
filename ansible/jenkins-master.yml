@@ -1,0 +1,33 @@
+---
+  - name: Install git, ca-certificates, curl, gnupg, jenkins
+    apt:
+      name:
+        - git
+        - ca-certificates
+        - curl
+        - gnupg
+        - jenkins
+      state: present
+#      update_cache: true
+
+#  - name: Install Jenkins and requirements
+#    apt:
+#      name:
+#        - jenkins
+#      state: present
+#      update_cache: true
+#
+  - name: Ensure jenkins agents are present in known_hosts file
+    become: true
+    #become_user: "{{ jenkins_user_name }}"
+    known_hosts:
+      name: "{{ hostvars[item].ansible_host }}"
+      state: present
+      key: "{{ lookup('pipe', 'ssh-keyscan {{ hostvars[item].ansible_host }}') }}"
+      hash_host: true
+    with_items: "{{ groups['jenkins-agents'] }}"
+
+  - name: Restart jenkins service
+    service:
+      name: jenkins
+      state: restarted

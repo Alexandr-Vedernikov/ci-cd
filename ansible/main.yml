@@ -1,0 +1,56 @@
+---
+- name: Preapre all hosts
+  hosts: all
+  tasks:
+    - name: Create group
+      become: true
+      group:
+        name: "{{ user_group }}"
+        state: present
+    - name: Create user
+      become: true
+      user:
+        name: "{{ user_name }}"
+        generate_ssh_key: true
+      register: ssh_key_info
+
+    - name: Download Jenkins repository key
+      shell: sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+             https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      changed_when: false
+
+    - name: Add Jenkins repository
+      shell: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+             https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+              /etc/apt/sources.list.d/jenkins.list > /dev/null
+      changed_when: false
+
+    - name: Update apt cache
+      shell: sudo apt update
+
+    - name: Install JDK
+      become: true
+      apt:
+        name:
+          - fontconfig
+          - default-jdk #openjdk-11-jre   #"{{ java_packages }}"
+        state: present
+
+- name: Prepare jenkins-master
+  hosts: jenkins-masters
+  become: true
+  tasks:
+    - name: Install jenkins-master
+      include_tasks: jenkins-master.yml
+      tags:
+        - Prepare jenkins-master
+
+- name: Prepare jenkins agent
+  hosts: jenkins-agents
+  become: true
+#  become_user: "{{ jenkins_user_name }}"
+  tasks:
+    - name: Install Molecule
+      include_tasks: jenkins-agent.yml
+      tags:
+        - Prepare jenkins agent
