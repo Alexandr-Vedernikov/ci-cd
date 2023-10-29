@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  #become: true
+  gather_facts: true
+  #become_method: su
+  #become_user: centos
+  tasks:
+    - name: "Include vector-role"
+      include_role:
+        name: "vector-role"

@@ -1,0 +1,5 @@
+---
+  - src: git@github.com:Alexandr-Vedernikov/vector-role.git
+    scm: git
+    version: main
+    name: vector-role

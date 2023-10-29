@@ -1,0 +1,61 @@
+---
+
+- name: VECTOR | Copy Daemon script
+  template:
+    src: "{{ vector_service_template_path }}"
+    dest: /etc/systemd/system/vector.service
+    mode: 0644
+    owner: root
+    group: root
+  #notify: Start Vector service
+
+#- name: Check if systemctl is available
+#  stat:
+#    path: /bin/systemctl
+#  register: systemctl_available
+#  changed_when: false
+#  /etc/systemd/system 
+
+#- name: Add vector symlink to /usr/bin
+#  become: true
+#  ansible.builtin.file:
+#    src: "{{ vector_config_path }}" #"{{ vector_dir }}/bin/vector"
+#    dest: "/usr/bin/vector"
+#    state: link
+#- name: daemon-reload
+#  shell: /bin/systemctl daemon-reload
+
+#- name: Enable vector service
+#  service:
+#    name: vector
+#    pattern: /etc/systemd/system/vector.service
+#    state: started
+#    enabled: yes
+
+#- name: Modify baseurl in yum repos
+#  shell: systemctl enable vector
+#  shell: export PATH=$PATH:/etc/systemd/system/
+#  changed_when: false
+
+#- name: Reload systemd daemon
+#  systemd:
+#    daemon_reload: yes
+
+#- name: VECTOR | Configuring service
+#  systemd:
+#  service:
+#    name: vector.service #vector
+#    state: started #"{{ vector_service_state }}"
+#    enabled: true #"{{ vector_service_enabled }}"
+#    masked: no
+#    daemon_reload: yes
+  #notify: Start Vector service
+
+#- name: VECTOR | Copy Daemon script
+#  template:
+#    src: "{{ vector_service_template_path }}"
+#    dest: /etc/systemd/system/vector.service
+#    mode: 0644
+#    owner: root
+#    group: root
+#  notify: Start Vector service
